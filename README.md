@@ -1,287 +1,378 @@
-# KE Library
-### Lab 3 — Database Course Project
+# 📚 KE Library — Library Management System
 
 **Student Name:** Kareem Emara  
 **Student ID:** 2304032
 
+A full-stack Library Management System built with **Python, Flask, Microsoft SQL Server, and HTML/CSS**. The project combines user authentication, task management, a classic library interface, and an extended database-driven library application developed for Database Lab 4.
+
+The application demonstrates relational database design, SQL queries, joins, filtering, sorting, reporting, and secure database interaction through a Flask web application.
+
 ---
 
-## 1. Project Overview
+## 📌 Project Overview
 
-**KE Library** is a web-based Library Management System developed using Python, Flask, and Microsoft SQL Server.
+KE Library is designed to manage library data and provide an interactive interface for exploring books, authors, publishers, categories, members, and borrowing records.
 
-The application provides a simple and user-friendly interface for managing books and authors. Users can register, log in, and perform basic database operations through the website.
+The project includes two main parts:
 
-The project demonstrates the integration of a web application with relational databases and the implementation of CRUD operations.
+1. **Original Application:** User registration, login, To-Do management, and the original library pages.
+2. **Library Lab 4:** An extended library management application connected to a dedicated SQL Server database, implementing the required database operations and reports.
 
-## 2. Technologies Used
+The original databases and functionality are preserved, while Lab 4 uses a separate database named `library_lab4`.
 
-- **Python** — Application logic and backend development.
-- **Flask** — Web framework used to build the application.
-- **Microsoft SQL Server** — Relational database management system.
-- **SQL Server Management Studio (SSMS)** — Database creation and management.
-- **pyodbc** — Connects Python to SQL Server.
-- **HTML and CSS** — Website structure and styling.
-- **Jinja2** — Dynamic rendering of HTML templates.
-- **Git** — Version control (if used).
+---
 
-## 3. Project Structure
+## ✨ Features
 
-```text
-LAB3-2304032/
-├── problem1_DDL.sql
-├── problem1_DML.sql
-├── problem1_Answers.txt
-├── problem1_questions.sql
-├── problem2_DDL.sql
-├── problem2_DML.sql
-├── README.md
-└── website/
-    ├── app.py
-    ├── db.py
-    ├── requirements.txt
-    ├── templates/
-    │   ├── library.html
-    │   ├── login.html
-    │   ├── register.html
-    │   └── ...
-    ├── static/
-    │   └── ...
-    └── .env
-```
+### 🔐 1. User Authentication
 
-*Note: This is an illustrative structure. The actual files and template names may vary depending on the final project files.*
-
-## 4. Database Design
-
-The project uses two SQL Server databases.
-
-### 4.1 Registration Database
-
-The `registration` database handles user authentication.
-
-The `users` table stores information such as:
-
-- `user_id` — Unique user identifier.
-- `name` — User's name.
-- `email` — User's email address.
-- `password_hash` — Hashed password.
-- `registration_date` — Registration date.
-
-### 4.2 Library Database
-
-The `library` database stores information about books and their authors.
-
-**AUTHOR table**
-
-| Column | Description |
-|---|---|
-| `author_id` | Unique author identifier |
-| `name` | Author's name |
-| `country` | Author's country |
-
-**BOOK table**
-
-| Column | Description |
-|---|---|
-| `book_id` | Unique book identifier |
-| `title` | Book title |
-| `price` | Book price |
-| `author_id` | ID of the book's author |
-
-### 4.3 Relationship
-
-The `BOOK` table contains a foreign key referencing `AUTHOR.author_id`.
-
-This represents a one-to-many relationship: one author can have multiple books.
-
-The foreign key uses `ON DELETE CASCADE`, so deleting an author also deletes the books associated with that author.
-
-## 5. Main Features
-
-### User Authentication
-
-- User registration.
-- User login and logout.
-- Password hashing.
+- User registration and login.
+- Password hashing using `bcrypt`.
 - Session-based authentication.
+- Protected routes using a login-required decorator.
+- Logout functionality.
 
-### Author Management
+### ✅ 2. To-Do Management
 
-- Add a new author.
-- View authors and their countries.
-- Edit author information.
-- Delete an author.
+- Manage personal tasks.
+- Store and retrieve tasks through the database.
+- Keep user-related functionality separate from the library database.
 
-### Book Management
+### 📚 3. Book Search — F2.1
 
-- Add a new book and assign it to an author.
-- View books and their details.
-- Edit book information.
-- Delete a book.
+Search for books using different criteria:
 
-### User Interface
+- Search by book title or keyword.
+- Filter books by minimum and maximum price.
+- Filter by category.
+- Display related author, publisher, and category information.
+
+**Bonus: Prepared Statements**
+
+The search functionality uses parameterized SQL queries with `?` placeholders.
+
+Instead of inserting user input directly into SQL strings, values are passed separately through `cursor.execute()`.
+
+This helps prevent SQL injection and makes database queries safer.
+
+### 📖 4. Book Catalogue — F2.2
+
+Display the complete book catalogue with information such as:
+
+- Book ID
+- Book title
+- Price
+- Publication year
+- Author
+- Publisher
+- Category
+
+**Sorting functionality:**
+
+- Sort by Book ID.
+- Sort by Book Name.
+- Sort by Price.
+- Choose ascending or descending order.
+
+Sorting options are validated before being used in the SQL query.
+
+### 📊 5. Library Reports — F2.3
+
+Display useful statistics and information about the library database.
+
+The reports section provides an overview of the available library data and helps users explore relationships between books and their related records.
+
+### 🔄 6. Loan Management & History — F2.4
+
+Track borrowing activity and manage book returns.
+
+**Outstanding Loans**
+- Display books that have been borrowed but not returned.
+- Show loan ID, book, member, email, and loan date.
+- Identify active borrowing records.
+
+**Complete Loan History**
+- Display all borrowing records.
+- Show the borrowing date and return date.
+- Distinguish between returned and unreturned books.
+- Filter records by:
+  - All Loans
+  - Returned
+  - Not Returned
+
+**Mark as Returned**
+
+Authorized users can mark a borrowed book as returned directly from the page.
+
+When the user confirms the action:
+- The corresponding loan record is updated.
+- SQL Server records the current return date.
+- The loan remains in the database as part of the borrowing history.
+
+**Additional Reports**
+- Members who have never borrowed a book.
+- Books that have never been borrowed.
+
+### 🏆 7. Most Borrowed — F2.5
+
+Analyze borrowing activity to identify popular books and members.
+
+The page provides information about borrowing frequency and helps highlight the most active borrowing records.
+
+### ✍️ 8. Authors — F2.6
+
+Explore author-related information stored in the database.
+
+Includes author information and country-based comparisons to help analyze the authors represented in the library.
+
+### 🎨 9. User Interface
 
 - Dark-themed interface.
-- Responsive layout for different screen sizes.
-- Separate forms and cards for books and authors.
-- Confirmation prompts before deleting records.
+- Responsive layouts for different screen sizes.
+- Shared navigation between Lab 4 pages.
+- Organized tables and report sections.
+- Clear status indicators and interactive controls.
 
-## 6. Requirements
+---
 
-Before running the project, make sure the following are installed:
+## 🛠️ Technologies Used
 
-- Python 3.
-- Microsoft SQL Server.
-- SQL Server Management Studio (SSMS).
-- Microsoft ODBC Driver 17 for SQL Server.
+| Technology | Purpose |
+|---|---|
+| Python | Backend programming |
+| Flask | Web application framework |
+| Microsoft SQL Server | Relational database management |
+| SQL | Database queries and operations |
+| pyodbc | Python–SQL Server connectivity |
+| HTML5 | Web page structure |
+| CSS3 | Styling and responsive design |
+| Jinja2 | Dynamic HTML templates |
+| bcrypt | Password hashing |
+| python-dotenv | Environment variable management |
 
-## 7. Database Setup
+---
 
-1. Open SQL Server Management Studio.
-2. Connect to your SQL Server instance.
-3. Create the required `registration` and `library` databases if they do not already exist.
-4. Execute the appropriate SQL scripts to create the tables and insert the initial data.
-5. Verify that the required tables and relationships have been created successfully.
+## 🗄️ Database Design
 
-Run the SQL scripts in the correct order according to their contents and database dependencies.
+The Lab 4 application uses a dedicated SQL Server database:
 
-## 8. Installation and Execution
+**Database:** `library_lab4`
 
-### Step 1: Open the Website Directory
+### Main Tables
 
-Open a terminal and navigate to the website folder:
+| Table | Description |
+|---|---|
+| `AUTHOR` | Stores author information |
+| `PUBLISHER` | Stores publisher information |
+| `CATEGORY` | Stores book categories |
+| `BOOK` | Stores book details and relationships |
+| `MEMBER` | Stores library member information |
+| `LOAN` | Stores borrowing and return records |
 
-```powershell
-cd "D:\college\level 3\Database\labs\LAB3-2304032\website"
+### Relationships
+
+- An author can be associated with multiple books.
+- A publisher can publish multiple books.
+- A category can contain multiple books.
+- A book can have multiple loan records over time.
+- A member can borrow multiple books.
+
+### Loan Status Logic
+
+The `LOAN` table contains a `return_date` column.
+
+| Condition | Status |
+|---|---|
+| `return_date IS NULL` | Not Returned |
+| `return_date IS NOT NULL` | Returned |
+
+This approach preserves borrowing history instead of deleting loan records after a book is returned.
+
+---
+
+## 🏗️ Application Structure
+
+The project is organized into backend logic, database connectivity, HTML templates, CSS, and SQL scripts.
+
+```text
+KE-Library/
+│
+├── website/
+│   ├── app.py
+│   │
+│   ├── db.py
+│   │
+│   ├── templates/
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── ...
+│   │   │
+│   │   ├── lab4_base.html
+│   │   ├── lab4_search.html
+│   │   ├── lab4_catalogue.html
+│   │   ├── lab4_reports.html
+│   │   ├── lab4_loans.html
+│   │   ├── lab4_most_borrowed.html
+│   │   └── lab4_authors.html
+│   │
+│   └── static/
+│       └── lab4.css
+│
+├── SQL/
+│   ├── DDL.sql
+│   └── DML.sql
+│
+├── .env
+├── .gitignore
+├── requirements.txt
+└── README.md
 ```
 
-Adjust the path if the project is stored in a different location.
+*The structure above illustrates the main project components. File names and folder locations may differ slightly in your local version.*
 
-### Step 2: Create a Virtual Environment
+---
 
-```powershell
-python -m venv .venv
+## ⚙️ Installation & Setup
+
+Follow these steps to run the project locally.
+
+### 1. Clone the Repository
+
+```bash
+git clone <YOUR_REPOSITORY_URL>
 ```
 
-### Step 3: Activate the Virtual Environment
+Navigate to the project directory:
 
-```powershell
-.\.venv\Scripts\Activate.ps1
+```bash
+cd KE-Library
 ```
 
-If PowerShell blocks script execution, use the activation method appropriate for your system.
+### 2. Create a Virtual Environment
 
-### Step 4: Install Dependencies
+```bash
+python -m venv venv
+```
 
-```powershell
+Activate it on Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### Step 5: Configure the Database Connection
+If you don't have a `requirements.txt` file yet, install the main dependencies:
 
-Check `db.py` and configure the SQL Server connection settings to match your local environment.
+```bash
+pip install Flask pyodbc python-dotenv bcrypt
+```
 
-The current project uses Windows trusted authentication and ODBC Driver 17.
+### 4. Configure SQL Server
 
-Ensure that the required databases exist and that your Windows account has permission to access them.
+Make sure you have:
 
-If the application uses a `.env` file, configure the required environment variables according to the application's code.
+- Microsoft SQL Server installed and running.
+- SQL Server Management Studio (SSMS).
+- A compatible Microsoft ODBC Driver for SQL Server.
 
-### Step 6: Run the Application
+Open the SQL scripts in SSMS.
 
-```powershell
+**Create the Lab 4 database and tables:**
+
+Execute `DDL.sql` to create the `library_lab4` database and its tables.
+
+**Insert sample data:**
+
+Execute `DML.sql` to populate the tables with sample records.
+
+> If the database already exists, don't execute the `CREATE DATABASE` statement again. Select the existing database and run only the required table or data scripts.
+
+### 5. Configure Database Connections
+
+Update your database connection settings in `db.py`.
+
+The application uses separate connection functions for its different databases:
+
+```python
+get_connection()
+get_library_connection()
+get_library_lab4_connection()
+```
+
+Make sure each function points to the correct SQL Server database and authentication settings.
+
+Keep your actual credentials out of GitHub. Store sensitive configuration in environment variables or a local `.env` file.
+
+### 6. Run the Application
+
+From the appropriate project directory, run:
+
+```bash
 python app.py
 ```
 
-Open the local URL displayed in the terminal, typically:
+Open your browser and navigate to:
 
-`http://127.0.0.1:5000`
+```text
+http://127.0.0.1:5000
+```
 
-Register an account or log in to access the library management page.
+Register or log in to access the application.
 
-## 9. Testing
+---
 
-The following operations should be tested before submission:
+## 🧠 Database Concepts Demonstrated
 
-- Registering a new user and logging in.
-- Logging out and verifying the redirect behavior.
-- Adding, editing, and deleting authors.
-- Adding, editing, and deleting books.
-- Checking that books are associated with the correct authors.
-- Verifying that changes persist in SQL Server.
-- Testing the foreign key relationship and cascading deletion.
-- Restarting the application and confirming that saved data remains available.
+This project applies several important relational database concepts:
 
-## 10. Security and Configuration
+- **DDL:** Creating databases, tables, constraints, and relationships.
+- **DML:** Inserting and modifying database records.
+- **SELECT Queries:** Retrieving and filtering data.
+- **INNER JOIN:** Combining related records from multiple tables.
+- **LEFT JOIN:** Identifying members and books without borrowing records.
+- **Aggregate Functions:** Calculating statistics and borrowing counts.
+- **GROUP BY:** Grouping records for reporting.
+- **ORDER BY:** Sorting books and report results.
+- **NULL Handling:** Identifying books that have not been returned.
+- **Foreign Keys:** Maintaining relationships between tables.
+- **Parameterized Queries:** Passing user input safely to SQL Server.
+- **UPDATE:** Modifying loan records when books are returned.
 
-- Passwords should be stored as hashes rather than plain text.
-- Database connection settings and secrets should not be committed to a public repository.
-- The `.env` file and virtual environment should be excluded from version control.
-- Database operations should use parameterized queries to reduce SQL injection risks.
+---
 
-## 11. Conclusion
+## 🔒 Security & Good Practices
 
-KE Library demonstrates how Python, Flask, and Microsoft SQL Server can be integrated to build a functional web-based database application.
+- Passwords are hashed using `bcrypt`.
+- Database queries use parameterized values where applicable.
+- User input is not directly concatenated into search SQL statements.
+- Sorting options are validated against allowed values.
+- Login-protected pages use session authentication.
+- Database connections and cursors are closed after use.
+- Database credentials should not be committed to the repository.
 
-The project combines user authentication, relational database design, foreign key constraints, and CRUD operations in a simple library management interface.
+---
+
+## 🚀 Future Improvements
+
+Potential enhancements include:
+
+- Add new borrowing records directly through the interface.
+- Add member and book management forms (CRUD operations).
+- Add due dates and overdue loan notifications.
+- Add pagination for large catalogues and loan histories.
+- Add advanced analytics and visual dashboards.
+- Add role-based permissions for administrators and members.
 
 ---
 
 
----
+## 📄 License
 
-## Lab 4 — Problem 2: Library Database Pages
+This project was developed for educational purposes as part of a Database Systems Lab assignment.
 
-The Lab 4 implementation is added alongside the original Lab 3 library. It uses a separate SQL Server database named `library_lab4`, so the existing `registration` and `library` databases and their routes remain separate.
-
-### Lab 4 website pages
-
-After signing in, open the original KE Library page and choose **Lab 4 Pages**, or visit `/library-lab4`.
-
-| Requirement | Route | Description |
-|---|---|---|
-| F2.1 | `/library-lab4/search` | Search by title keyword, price range, and category |
-| F2.2 | `/library-lab4/catalogue` | Full book catalogue with author, publisher, and category |
-| F2.3 | `/library-lab4/reports` | Category statistics, authors with at least two books, and price statistics |
-| F2.4 | `/library-lab4/loans` | Outstanding loans, members who never borrowed, and books never borrowed |
-| F2.5 | `/library-lab4/most-borrowed` | Top three most borrowed books and the member with most loans |
-| F2.6 | `/library-lab4/authors` | All authors including zero-book authors, and same-country author/publisher books |
-
-### Database setup
-
-1. Open SQL Server Management Studio.
-2. Create the `library_lab4` database if it does not already exist:
-   ```sql
-   CREATE DATABASE library_lab4;
-   GO
-   ```
-3. Run `problem2_DDL.sql` in SSMS.
-4. Run `problem2_DML.sql` once to insert the sample records.
-5. Run `problem2_Queries.sql` to verify the required queries.
-
-**Important:** The DDL script drops and recreates the six Lab 4 tables. Running it again deletes the current Lab 4 table data. Run the DML script only once after DDL unless you intentionally reset the database.
-
-### Run the Flask website
-
-1. Make sure SQL Server is running and the ODBC Driver 17 for SQL Server is installed.
-2. In `website/db.py`, verify the SQL Server instance name and database names in the connection strings. The default is `SERVER=localhost` with Windows Trusted Connection.
-3. Create a `.env` file in the `website` folder with a Flask secret key:
-   ```env
-   SECRET_KEY=replace-this-with-a-long-random-secret
-   ```
-4. Install dependencies (if they are not already installed):
-   ```bash
-   pip install flask pyodbc python-dotenv bcrypt
-   ```
-5. Start the application from the `website` folder:
-   ```bash
-   python app.py
-   ```
-6. Open the local URL printed by Flask, sign in, and click **Lab 4 Pages** on the original library page.
-
-### SQL Server compatibility note
-
-The assignment brief describes MySQL, while this project is implemented with Microsoft SQL Server. The website and SQL scripts therefore use SQL Server syntax, including `IDENTITY(1,1)` for generated IDs and `TOP` for top-N queries. If the instructor requires MySQL specifically, the scripts need dialect conversion before submission.
-#   2 3 0 4 0 3 2 - L A B _ 4  
- 
+You may adapt and extend it for learning and personal development.
