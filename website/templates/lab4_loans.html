@@ -1,0 +1,251 @@
+
+{% extends "lab4_base.html" %}
+{% set active = "loans" %}
+
+{% block title %}Loan History | KE Library{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <span class="eyebrow">F2.4 · LOAN MANAGEMENT</span>
+    <h1>Loan History</h1>
+    <p>Track borrowed books, returned books, and outstanding loans.</p>
+</section>
+
+<!-- Update messages -->
+{% if updated == "1" %}
+<div class="success-message">
+    <span>✓</span> Book successfully marked as returned!
+</div>
+{% elif updated == "0" %}
+<div class="alert">
+    This loan was already returned or could not be found.
+</div>
+{% endif %}
+
+
+<!-- Outstanding Loans -->
+<section class="panel">
+
+    <div class="section-title">
+        <h2>Outstanding Loans</h2>
+        <span class="count">{{ outstanding|length }} active loan(s)</span>
+    </div>
+
+    {% if outstanding %}
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Loan Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in outstanding %}
+                <tr>
+                    <td>{{ row.loan_id }}</td>
+
+                    <td class="book-title">
+                        {{ row.book_title }}
+                    </td>
+
+                    <td>
+                        {{ row.member_name }}
+                        <small class="table-subtext">{{ row.email }}</small>
+                    </td>
+
+                    <td>{{ row.loan_date }}</td>
+
+                    <td>
+                        <span class="status">Not Returned</span>
+                    </td>
+
+                    <td>
+                        <form method="POST"
+                              action="{{ url_for('lab4_return_book', loan_id=row.loan_id) }}"
+                              onsubmit="return confirm('Confirm that this book has been returned?');">
+
+                            <button type="submit" class="btn return-btn">
+                                ✓ Mark as Returned
+                            </button>
+
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        Great! There are no outstanding loans.
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- Complete Loan History -->
+<section class="panel">
+
+    <div class="section-title">
+        <h2>Complete Loan History</h2>
+        <span class="count">{{ history|length }} record(s)</span>
+    </div>
+
+    <!-- History Filters -->
+    <div class="history-filters">
+
+        <a href="{{ url_for('lab4_loans', status='all') }}"
+           class="history-filter {% if status_filter == 'all' %}selected{% endif %}">
+            All Loans
+        </a>
+
+        <a href="{{ url_for('lab4_loans', status='returned') }}"
+           class="history-filter {% if status_filter == 'returned' %}selected{% endif %}">
+            Returned
+        </a>
+
+        <a href="{{ url_for('lab4_loans', status='not_returned') }}"
+           class="history-filter {% if status_filter == 'not_returned' %}selected{% endif %}">
+            Not Returned
+        </a>
+
+    </div>
+
+    {% if history %}
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Loan Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in history %}
+                <tr>
+                    <td>{{ row.loan_id }}</td>
+
+                    <td class="book-title">
+                        {{ row.book_title }}
+                    </td>
+
+                    <td>
+                        {{ row.member_name }}
+                        <small class="table-subtext">{{ row.email }}</small>
+                    </td>
+
+                    <td>{{ row.loan_date }}</td>
+
+                    <td>
+                        {% if row.return_date %}
+                            {{ row.return_date }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if row.return_date %}
+                            <span class="returned-status">Returned</span>
+                        {% else %}
+                            <span class="status">Not Returned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty">
+        No borrowing records found for this filter.
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- Other Reports -->
+<section class="two-col">
+
+    <div class="panel">
+
+        <div class="section-title">
+            <h2>Members Who Never Borrowed</h2>
+            <span class="count">{{ inactive_members|length }}</span>
+        </div>
+
+        {% if inactive_members %}
+
+        <ul class="simple-list">
+            {% for m in inactive_members %}
+            <li>
+                <strong>{{ m.name }}</strong>
+                <small>{{ m.email }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% else %}
+
+        <div class="empty">
+            Every member has borrowed a book.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="section-title">
+            <h2>Books Never Borrowed</h2>
+            <span class="count">{{ unborrowed_books|length }}</span>
+        </div>
+
+        {% if unborrowed_books %}
+
+        <ul class="simple-list">
+            {% for b in unborrowed_books %}
+            <li>
+                <strong>{{ b.title }}</strong>
+                <small>Book ID: {{ b.book_id }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {% else %}
+
+        <div class="empty">
+            Every book has been borrowed.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

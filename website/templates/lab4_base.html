@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KE Library | Lab 4{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='lab4.css') }}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="{{ url_for('lab4_catalogue') }}"><span class="brand-icon">📚</span><span>KE Library <small>LAB 4</small></span></a>
+    <div class="welcome">Welcome, {{ name }} <a class="logout" href="{{ url_for('logout') }}">Logout</a></div>
+</header>
+<nav class="nav">
+    <a href="{{ url_for('lab4_search') }}" class="{% if active == 'search' %}active{% endif %}">Search Books</a>
+    <a href="{{ url_for('lab4_catalogue') }}" class="{% if active == 'catalogue' %}active{% endif %}">Catalogue</a>
+    <a href="{{ url_for('lab4_reports') }}" class="{% if active == 'reports' %}active{% endif %}">Reports</a>
+    <a href="{{ url_for('lab4_loans') }}" class="{% if active == 'loans' %}active{% endif %}">Loan History</a>
+    <a href="{{ url_for('lab4_most_borrowed') }}" class="{% if active == 'popular' %}active{% endif %}">Most Borrowed</a>
+    <a href="{{ url_for('lab4_authors') }}" class="{% if active == 'authors' %}active{% endif %}">Authors</a>
+    <a href="{{ url_for('library_page') }}">Old Library</a>
+</nav>
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+<footer class="footer">KE Library </footer>
+</body>
+</html>

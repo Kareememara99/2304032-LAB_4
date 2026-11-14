@@ -1,0 +1,10 @@
+{% extends "lab4_base.html" %}
+{% set active = "authors" %}
+{% block title %}Authors & Books | KE Library{% endblock %}
+{% block content %}
+<section class="page-heading"><span class="eyebrow">F2.6 · LEFT JOIN / INNER JOIN</span><h1>Authors & Books</h1><p>See every author, including those without books, and compare author and publisher countries.</p></section>
+<section class="panel"><div class="section-title"><h2>All Authors and Their Book Counts</h2><span class="count">{{ author_stats|length }} authors</span></div>
+<div class="table-wrap"><table><thead><tr><th>Author</th><th>Country</th><th>Books Count</th></tr></thead><tbody>{% for a in author_stats %}<tr><td class="book-title">{{ a.author_name }}</td><td>{{ a.country }}</td><td><span class="pill">{{ a.books_count }}</span></td></tr>{% endfor %}</tbody></table></div></section>
+<section class="panel"><div class="section-title"><h2>Books with Author and Publisher from the Same Country</h2><span class="count">{{ same_country_books|length }} book(s)</span></div>
+{% if same_country_books %}<div class="table-wrap"><table><thead><tr><th>Book</th><th>Author</th><th>Author Country</th><th>Publisher</th><th>Publisher Country</th></tr></thead><tbody>{% for b in same_country_books %}<tr><td class="book-title">{{ b.title }}</td><td>{{ b.author_name }}</td><td>{{ b.author_country }}</td><td>{{ b.publisher_name }}</td><td>{{ b.publisher_country }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty">No matching author and publisher countries.</div>{% endif %}</section>
+{% endblock %}

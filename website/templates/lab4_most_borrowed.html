@@ -1,0 +1,10 @@
+{% extends "lab4_base.html" %}
+{% set active = "popular" %}
+{% block title %}Most Borrowed | KE Library{% endblock %}
+{% block content %}
+<section class="page-heading"><span class="eyebrow">F2.5 · TOP / GROUP BY / ORDER BY</span><h1>Most Borrowed</h1><p>Discover the most popular books and the most active library member.</p></section>
+<section class="panel"><div class="section-title"><h2>Top 3 Most Borrowed Books</h2><span class="pill">TOP 3</span></div>
+{% if popular_books %}<div class="ranking-list">{% for b in popular_books %}<div class="rank-row"><span class="rank-number">{{ loop.index }}</span><div class="rank-info"><strong>{{ b.title }}</strong><small>Book ID: {{ b.book_id }}</small></div><span class="rank-count">{{ b.loans_count }} loans</span></div>{% endfor %}</div>{% else %}<div class="empty">No borrowing records found.</div>{% endif %}</section>
+<section class="panel"><div class="section-title"><h2>Member with the Most Loans</h2></div>
+{% if top_members %}{% for m in top_members %}<div class="featured-member"><div><span class="eyebrow">MOST ACTIVE MEMBER</span><h2>{{ m.name }}</h2><p>{{ m.email }}</p></div><strong>{{ m.loans_count }}<small>loans</small></strong></div>{% endfor %}{% else %}<div class="empty">No members have borrowed books yet.</div>{% endif %}</section>
+{% endblock %}

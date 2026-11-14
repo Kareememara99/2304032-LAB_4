@@ -1,0 +1,24 @@
+{% extends "lab4_base.html" %}
+{% set active = "search" %}
+{% block title %}Search Books | KE Library{% endblock %}
+{% block content %}
+<section class="page-heading"><span class="eyebrow">F2.1 · WHERE / LIKE / BETWEEN</span><h1>Search Books</h1><p>Find books by title, price range, and category.</p></section>
+{% if errors %}<div class="alert">{% for error in errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+<section class="panel">
+<form method="GET" action="{{ url_for('lab4_search') }}" class="filter-grid">
+    <label>Title keyword<input type="text" name="keyword" value="{{ keyword }}" placeholder="e.g. Love"></label>
+    <label>Minimum price<input type="number" name="min_price" min="0" step="0.01" value="{{ min_price }}" placeholder="No minimum"></label>
+    <label>Maximum price<input type="number" name="max_price" min="0" step="0.01" value="{{ max_price }}" placeholder="No maximum"></label>
+    <label>Category<select name="category_id"><option value="">All categories</option>{% for category in categories %}<option value="{{ category.category_id }}" {% if selected_category|string == category.category_id|string %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></label>
+    <div class="filter-actions"><button class="btn primary" type="submit">Search</button><a class="btn secondary" href="{{ url_for('lab4_search') }}">Clear filters</a></div>
+</form>
+</section>
+<section class="panel">
+<div class="section-title"><h2>Search Results</h2><span class="count">{{ books|length }} result(s)</span></div>
+{% if books %}
+<div class="table-wrap"><table><thead><tr><th>Book</th><th>Author</th><th>Publisher</th><th>Category</th><th>Year</th><th>Price</th></tr></thead><tbody>
+{% for book in books %}<tr><td class="book-title">{{ book.title }}</td><td>{{ book.author_name }}</td><td>{{ book.publisher_name }}</td><td><span class="pill">{{ book.category_name }}</span></td><td>{{ book.publish_year }}</td><td class="price">{{ "%.2f"|format(book.price) }}</td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty">No matching books found. Try changing your filters.</div>{% endif %}
+</section>
+{% endblock %}

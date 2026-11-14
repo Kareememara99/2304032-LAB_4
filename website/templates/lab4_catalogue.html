@@ -1,0 +1,115 @@
+
+{% extends "lab4_base.html" %}
+{% set active = "catalogue" %}
+
+{% block title %}Book Catalogue | KE Library{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <span class="eyebrow">F2.2 · INNER JOIN</span>
+    <h1>Book Catalogue</h1>
+    <p>Explore all books with their author, publisher, and category details.</p>
+</section>
+
+<section class="panel">
+
+    <div class="section-title">
+        <h2>All Books</h2>
+        <span class="count">{{ books|length }} books</span>
+    </div>
+
+    <!-- Sorting Options -->
+    <form method="GET"
+          action="{{ url_for('lab4_catalogue') }}"
+          class="catalogue-sort">
+
+        <div class="sort-field">
+            <label for="sort_by">Sort By</label>
+            <select name="sort_by" id="sort_by">
+                <option value="id" {% if sort_by == "id" %}selected{% endif %}>
+                    Book ID
+                </option>
+
+                <option value="name" {% if sort_by == "name" %}selected{% endif %}>
+                    Book Name
+                </option>
+
+                <option value="price" {% if sort_by == "price" %}selected{% endif %}>
+                    Price
+                </option>
+            </select>
+        </div>
+
+        <div class="sort-field">
+            <label for="sort_order">Order</label>
+            <select name="sort_order" id="sort_order">
+                <option value="asc" {% if sort_order == "asc" %}selected{% endif %}>
+                    Ascending
+                </option>
+
+                <option value="desc" {% if sort_order == "desc" %}selected{% endif %}>
+                    Descending
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn primary">
+                Apply Sort
+            </button>
+
+            <a href="{{ url_for('lab4_catalogue') }}"
+               class="btn secondary">
+                Reset
+            </a>
+        </div>
+
+    </form>
+
+    <!-- Books Table -->
+    {% if books %}
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Publisher</th>
+                    <th>Category</th>
+                    <th>Year</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for b in books %}
+                <tr>
+                    <td>{{ b.book_id }}</td>
+                    <td class="book-title">{{ b.title }}</td>
+                    <td>{{ b.author_name }}</td>
+                    <td>{{ b.publisher_name }}</td>
+                    <td>
+                        <span class="pill">{{ b.category_name }}</span>
+                    </td>
+                    <td>{{ b.publish_year }}</td>
+                    <td class="price">
+                        {{ "%.2f"|format(b.price) }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty">No books are available.</div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

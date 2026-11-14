@@ -1,0 +1,104 @@
+
+USE library_lab4;
+GO
+
+-- Drop existing tables if they exist
+-- Drop child tables before parent tables
+
+DROP TABLE IF EXISTS LOAN;
+DROP TABLE IF EXISTS BOOK;
+DROP TABLE IF EXISTS MEMBER;
+DROP TABLE IF EXISTS CATEGORY;
+DROP TABLE IF EXISTS PUBLISHER;
+DROP TABLE IF EXISTS AUTHOR;
+GO
+
+-- 1. AUTHOR TABLE
+CREATE TABLE AUTHOR (
+    author_id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    country VARCHAR(50) NOT NULL
+);
+GO
+
+-- 2. PUBLISHER TABLE
+CREATE TABLE PUBLISHER (
+    publisher_id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    country VARCHAR(50) NOT NULL
+);
+GO
+
+-- 3. CATEGORY TABLE
+CREATE TABLE CATEGORY (
+    category_id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+GO
+
+-- 4. BOOK TABLE
+CREATE TABLE BOOK (
+    book_id INT IDENTITY(1,1) PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    publish_year INT NOT NULL,
+    author_id INT NOT NULL,
+    publisher_id INT NOT NULL,
+    category_id INT NOT NULL,
+
+    CONSTRAINT CK_BOOK_PRICE
+        CHECK (price >= 0),
+
+    CONSTRAINT FK_BOOK_AUTHOR
+        FOREIGN KEY (author_id)
+        REFERENCES AUTHOR(author_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_BOOK_PUBLISHER
+        FOREIGN KEY (publisher_id)
+        REFERENCES PUBLISHER(publisher_id),
+
+    CONSTRAINT FK_BOOK_CATEGORY
+        FOREIGN KEY (category_id)
+        REFERENCES CATEGORY(category_id)
+);
+GO
+
+-- 5. MEMBER TABLE
+CREATE TABLE MEMBER (
+    member_id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    join_date DATE NOT NULL
+);
+GO
+
+-- 6. LOAN TABLE
+CREATE TABLE LOAN (
+    loan_id INT IDENTITY(1,1) PRIMARY KEY,
+    book_id INT NOT NULL,
+    member_id INT NOT NULL,
+    loan_date DATE NOT NULL,
+    return_date DATE NULL,
+
+    CONSTRAINT FK_LOAN_BOOK
+        FOREIGN KEY (book_id)
+        REFERENCES BOOK(book_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_LOAN_MEMBER
+        FOREIGN KEY (member_id)
+        REFERENCES MEMBER(member_id),
+
+    CONSTRAINT CK_LOAN_RETURN_DATE
+        CHECK (return_date IS NULL OR return_date >= loan_date)
+);
+GO
+
+-- Verify all tables
+SELECT TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE';
+GO
+
+
